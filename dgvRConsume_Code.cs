@@ -45,9 +45,6 @@ namespace ORM_Resourses
             catch (Exception err)
             {
                 MessageBox.Show(err.Message);
-#if DEBUG
-                throw err;
-#endif
             }
             dgvRConsume.Columns[MyHelper.strSource].Visible = false;
         }
@@ -106,9 +103,21 @@ namespace ORM_Resourses
                             return;
                         }
 
-                        new_brc.resources_id = new_resource_id;
-                        new_brc.building_id = new_building_id;
-                        new_brc.consume_speed = new_consume_speed;
+                        if (new_brc.resources_id != new_resource_id || new_brc.building_id != new_building_id)
+                        {
+                            ctx.buildings_resources_consume.Remove(new_brc);
+                            ctx.SaveChanges();
+                            new_brc = new buildings_resources_consume();
+
+                            new_brc.resources_id = new_resource_id;
+                            new_brc.building_id = new_building_id;
+                            new_brc.consume_speed = new_consume_speed;
+                            ctx.buildings_resources_consume.Add(new_brc);
+                        }
+                        else
+                        {
+                            new_brc.consume_speed = new_consume_speed;
+                        }
 
                         ctx.SaveChanges();
                     }
@@ -144,9 +153,6 @@ namespace ORM_Resourses
             catch (Exception err)
             {
                 MessageBox.Show(err.Message);
-#if DEBUG
-                throw err;
-#endif
             }
         }
 
@@ -167,9 +173,6 @@ namespace ORM_Resourses
                 catch (Exception err)
                 {
                     MessageBox.Show(err.Message);
-#if DEBUG
-                    throw err;
-#endif
                 }
             }
         }

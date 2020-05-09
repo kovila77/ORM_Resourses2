@@ -42,9 +42,6 @@ namespace ORM_Resourses
             catch (Exception err)
             {
                 MessageBox.Show(err.Message);
-#if DEBUG
-                throw err;
-#endif
             }
         }
 
@@ -61,6 +58,7 @@ namespace ORM_Resourses
             {
                 cellWithPotentialError.ErrorText = MyHelper.strEmptyCell;
                 row.ErrorText = MyHelper.strBadRow;
+                return;
             }
             else
             {
@@ -117,9 +115,6 @@ namespace ORM_Resourses
             catch (Exception err)
             {
                 MessageBox.Show(err.Message);
-#if DEBUG
-                throw err;
-#endif
             }
         }
 
@@ -131,8 +126,8 @@ namespace ORM_Resourses
                 {
                     using (var ctx = new OpenDataContext())
                     {
-                        var res = (resource)e.Row.Cells[MyHelper.strSource].Value;
-                        ctx.resources.Attach(res);
+                        var res = ctx.resources.Find(((resource)e.Row.Cells[MyHelper.strSource].Value).resources_id);
+                        //ctx.resources.Attach(res);
 
                         bool cancel = res.buildings_resources_consume.Count > 0;
 
@@ -151,9 +146,6 @@ namespace ORM_Resourses
                 catch (Exception err)
                 {
                     MessageBox.Show(err.Message);
-#if DEBUG
-                    throw err;
-#endif
                 }
             }
         }
