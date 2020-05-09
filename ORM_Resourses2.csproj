@@ -99,6 +99,9 @@
     <Compile Include="DataGridViewComboBoxColumnBuildings.cs" />
     <Compile Include="DataGridViewComboBoxColumnOutpost.cs" />
     <Compile Include="DataGridViewComboBoxColumnResources.cs" />
+    <Compile Include="dgvRConsume_Code.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="dgvResources_Code.cs">
       <SubType>Form</SubType>
     </Compile>

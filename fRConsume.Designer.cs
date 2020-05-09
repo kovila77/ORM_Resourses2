@@ -36,7 +36,6 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.правкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.загрузитьЗановоToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.отменитьИзмененияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl.SuspendLayout();
             this.tpRes.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvResources)).BeginInit();
@@ -55,6 +54,7 @@
             this.tabControl.SelectedIndex = 0;
             this.tabControl.Size = new System.Drawing.Size(513, 243);
             this.tabControl.TabIndex = 0;
+            this.tabControl.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl_Selecting);
             // 
             // tpRes
             // 
@@ -76,8 +76,9 @@
             this.dgvResources.Name = "dgvResources";
             this.dgvResources.Size = new System.Drawing.Size(499, 211);
             this.dgvResources.TabIndex = 0;
-            this.dgvResources.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvResources_CellEndEdit);
+            this.dgvResources.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_CellEndEdit);
             this.dgvResources.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgv_CellValidating);
+            this.dgvResources.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvResources_RowValidating);
             this.dgvResources.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvResources_UserDeletingRow);
             // 
             // tpResConsume
@@ -100,15 +101,15 @@
             this.dgvRConsume.Name = "dgvRConsume";
             this.dgvRConsume.Size = new System.Drawing.Size(499, 211);
             this.dgvRConsume.TabIndex = 0;
-            this.dgvRConsume.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRConsume_CellEndEdit);
+            this.dgvRConsume.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_CellEndEdit);
             this.dgvRConsume.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgv_CellValidating);
+            this.dgvRConsume.RowValidating += new System.Windows.Forms.DataGridViewCellCancelEventHandler(this.dgvRConsume_RowValidating);
             this.dgvRConsume.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvRConsume_UserDeletingRow);
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.правкаToolStripMenuItem,
-            this.отменитьИзмененияToolStripMenuItem});
+            this.правкаToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(513, 24);
@@ -130,17 +131,11 @@
             this.загрузитьЗановоToolStripMenuItem.Text = "Загрузить заново";
             this.загрузитьЗановоToolStripMenuItem.Click += new System.EventHandler(this.ReloadData);
             // 
-            // отменитьИзмененияToolStripMenuItem
-            // 
-            this.отменитьИзмененияToolStripMenuItem.Name = "отменитьИзмененияToolStripMenuItem";
-            this.отменитьИзмененияToolStripMenuItem.Size = new System.Drawing.Size(207, 20);
-            this.отменитьИзмененияToolStripMenuItem.Text = "Отменить редактирование ячейки";
-            this.отменитьИзмененияToolStripMenuItem.Click += new System.EventHandler(this.CancelEdit);
-            // 
             // fRConsume
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.ClientSize = new System.Drawing.Size(513, 267);
             this.Controls.Add(this.tabControl);
             this.Controls.Add(this.menuStrip1);
@@ -169,7 +164,6 @@
         private System.Windows.Forms.ToolStripMenuItem правкаToolStripMenuItem;
         private System.Windows.Forms.DataGridView dgvRConsume;
         private System.Windows.Forms.ToolStripMenuItem загрузитьЗановоToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem отменитьИзмененияToolStripMenuItem;
     }
 }
 

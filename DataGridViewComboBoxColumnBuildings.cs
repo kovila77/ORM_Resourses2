@@ -15,7 +15,7 @@ namespace ORM_Resourses
         public DataGridViewComboBoxColumnBuildings() : base()
         {
             this.Name = MyHelper.strBuildingId;
-            this.HeaderText = "Форпост";
+            this.HeaderText = "Здание";
             this.DisplayMember = MyHelper.strBuildingName;
             this.ValueMember = MyHelper.strBuildingId;
             this.DataPropertyName = MyHelper.strBuildingId;

@@ -49,6 +49,11 @@ namespace ORM_Resourses
             return str;
         }
 
+        public static bool HaveSource(this DataGridViewRow row)
+        {
+            return row.Cells[strSource].Value != null && row.Cells[strSource].Value != DBNull.Value;
+        }
+
         public static bool IsEntireRowEmpty(DataGridViewRow row)
         {
             foreach (DataGridViewCell cell in row.Cells)
