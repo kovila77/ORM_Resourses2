@@ -2,6 +2,7 @@ namespace ORM_Resourses
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
@@ -17,12 +18,15 @@ namespace ORM_Resourses
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [System.ComponentModel.DisplayName("Ресурс")]
         public int resources_id { get; set; }
 
         [Required]
+        [System.ComponentModel.DisplayName("Ресурс")]
         public string resources_name { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        [System.ComponentModel.Browsable(false)]
         public virtual ICollection<buildings_resources_consume> buildings_resources_consume { get; set; }
     }
 }

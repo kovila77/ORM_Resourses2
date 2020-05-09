@@ -77,7 +77,7 @@
             this.dgvResources.Size = new System.Drawing.Size(499, 211);
             this.dgvResources.TabIndex = 0;
             this.dgvResources.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvResources_CellEndEdit);
-            this.dgvResources.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgvResources_CellValidating);
+            this.dgvResources.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgv_CellValidating);
             this.dgvResources.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvResources_UserDeletingRow);
             // 
             // tpResConsume
@@ -86,7 +86,7 @@
             this.tpResConsume.Location = new System.Drawing.Point(4, 22);
             this.tpResConsume.Name = "tpResConsume";
             this.tpResConsume.Padding = new System.Windows.Forms.Padding(3);
-            this.tpResConsume.Size = new System.Drawing.Size(660, 217);
+            this.tpResConsume.Size = new System.Drawing.Size(505, 217);
             this.tpResConsume.TabIndex = 1;
             this.tpResConsume.Text = "Потребление ресурсов";
             this.tpResConsume.UseVisualStyleBackColor = true;
@@ -98,10 +98,10 @@
             this.dgvRConsume.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvRConsume.Location = new System.Drawing.Point(3, 3);
             this.dgvRConsume.Name = "dgvRConsume";
-            this.dgvRConsume.Size = new System.Drawing.Size(654, 211);
+            this.dgvRConsume.Size = new System.Drawing.Size(499, 211);
             this.dgvRConsume.TabIndex = 0;
             this.dgvRConsume.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvRConsume_CellEndEdit);
-            this.dgvRConsume.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgvRConsume_CellValidating);
+            this.dgvRConsume.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgv_CellValidating);
             this.dgvRConsume.UserDeletingRow += new System.Windows.Forms.DataGridViewRowCancelEventHandler(this.dgvRConsume_UserDeletingRow);
             // 
             // menuStrip1

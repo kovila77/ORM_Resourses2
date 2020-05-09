@@ -11,50 +11,48 @@ namespace ORM_Resourses
     class DataGridViewComboBoxColumnResources : DataGridViewComboBoxColumn
     {
 
-        private DataTable _dtBuildings = null;
+        private DataTable _dtResources = null;
 
         public DataGridViewComboBoxColumnResources() : base()
         {
-            this.Name = MyHelper.strBuildingId;
-            this.HeaderText = "Форпост";
-            this.DisplayMember = MyHelper.strBuildingName;
-            this.ValueMember = MyHelper.strBuildingId;
-            this.DataPropertyName = MyHelper.strBuildingId;
+            this.Name = MyHelper.strResourceId;
+            this.HeaderText = "Ресурс";
+            this.DisplayMember = MyHelper.strResourceName;
+            this.ValueMember = MyHelper.strResourceId;
+            this.DataPropertyName = MyHelper.strResourceId;
             this.FlatStyle = FlatStyle.Flat;
-            InitializeDataTableBuildings();
+            InitializeDataTableResources();
         }
 
-        public void InitializeDataTableBuildings()
+        public void InitializeDataTableResources()
         {
-            _dtBuildings = new DataTable();
-            _dtBuildings.Columns.Add(MyHelper.strBuildingId, typeof(int));
-            _dtBuildings.Columns.Add(MyHelper.strBuildingName, typeof(string));
-            this.DataSource = _dtBuildings;
+            _dtResources = new DataTable();
+            _dtResources.Columns.Add(MyHelper.strResourceId, typeof(int));
+            _dtResources.Columns.Add(MyHelper.strResourceName, typeof(string));
+            this.DataSource = _dtResources;
         }
 
-        public void Add(int building_id, string building_name, int? outpost_id)
+        public void Add(int resource_id, string resource_name)
         {
             //_dtOutposts.Rows.Add(outpost_id, outpost_name, outpost_coordinate_x, outpost_coordinate_y, outpost_coordinate_z);
-            _dtBuildings.Rows.Add(building_id, building_name + (outpost_id.HasValue ? " — "
-                                             + outpost_id.ToString() : ""));
+            _dtResources.Rows.Add(resource_id, resource_name);
         }
 
-        public void Change(int building_id, string building_name, int? outpost_id = null)
+        public void Change(int resource_id, string resource_name)
         {
-            DataRow forChange = _dtBuildings.AsEnumerable().SingleOrDefault(row => row.Field<int>(MyHelper.strBuildingId) == building_id);
+            DataRow forChange = _dtResources.AsEnumerable().SingleOrDefault(row => row.Field<int>(MyHelper.strResourceId) == resource_id);
             if (forChange != null)
             {
-                forChange[MyHelper.strBuildingName] = building_name + (outpost_id.HasValue ? " — "
-                                                                    + outpost_id.ToString() : "");
+                forChange[MyHelper.strResourceName] = resource_name;
             }
         }
 
-        public void Remove(int building_id)
+        public void Remove(int resource_id)
         {
-            DataRow forDel = _dtBuildings.AsEnumerable().SingleOrDefault(row => row.Field<int>(MyHelper.strBuildingId) == building_id);
+            DataRow forDel = _dtResources.AsEnumerable().SingleOrDefault(row => row.Field<int>(MyHelper.strResourceId) == resource_id);
             if (forDel != null)
             {
-                _dtBuildings.Rows.Remove(forDel);
+                _dtResources.Rows.Remove(forDel);
             }
         }
     }

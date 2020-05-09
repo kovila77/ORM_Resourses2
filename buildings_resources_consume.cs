@@ -12,17 +12,24 @@ namespace ORM_Resourses
         [Key]
         [Column(Order = 0)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [System.ComponentModel.DisplayName("Название здания")]
         public int building_id { get; set; }
 
         [Key]
         [Column(Order = 1)]
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [System.ComponentModel.DisplayName("Ресурс")]
         public int resources_id { get; set; }
 
+        [System.ComponentModel.DisplayName("Скорость портебления")]
         public int consume_speed { get; set; }
 
+
+        [System.ComponentModel.Browsable(false)]
         public virtual building building { get; set; }
 
+
+        [System.ComponentModel.Browsable(false)]
         public virtual resource resource { get; set; }
     }
 }

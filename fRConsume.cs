@@ -15,39 +15,79 @@ namespace ORM_Resourses
 {
     public partial class fRConsume : Form
     {
-        private DataGridViewComboBoxColumn cbResorcesId;
-        private DataGridViewComboBoxColumn cbBuldingsId;
+        private DataGridViewComboBoxColumnResources cbcResorcesId = new DataGridViewComboBoxColumnResources();
+        private DataGridViewComboBoxColumnBuildings cbcBuldingsId = new DataGridViewComboBoxColumnBuildings();
+
+        private delegate void DeletingResourceHandle(resource res, ref bool cancel);
+        private event DeletingResourceHandle DeletinResource;
 
         public fRConsume()
         {
             InitializeComponent();
             menuStrip1.CausesValidation = false;
-            cbResorcesId = new DataGridViewComboBoxColumn()
-            {
-                Name = "rId",
-                HeaderText = "Ресурс",
-                DisplayMember = "name",
-                ValueMember = "id"
-            };
-            cbBuldingsId = new DataGridViewComboBoxColumn()
-            {
-                Name = "bId",
-                HeaderText = "Здание",
-                DisplayMember = "name",
-                ValueMember = "id"
-            };
-            InitializeDGVResources();
-            InitializeDGVRConsume();
+            dgvResources.DefaultCellStyle.NullValue = null;
+            dgvRConsume.DefaultCellStyle.NullValue = null;
+            InitializeDGVResources2();
+            InitializeDGVRConsume2();
         }
 
         private void ReloadData(object sender, EventArgs e)
         {
             dgvResources.CancelEdit();
             dgvRConsume.CancelEdit();
-            dgvRConsume.Columns.Clear();
             dgvResources.Columns.Clear();
-            InitializeDGVResources();
-            InitializeDGVRConsume();
+            InitializeDGVResources2();
+            InitializeDGVRConsume2();
+        }
+
+        private void InitializeDGVRConsume2()
+        {
+            using (var ctx = new OpenDataContext())
+            {
+                cbcBuldingsId.InitializeDataTableBuildings();
+                dgvRConsume.Columns.Clear();
+                dgvRConsume.Rows.Clear();
+
+                foreach (var build in ctx.buildings)
+                {
+                    cbcBuldingsId.Add(build.building_id, build.building_name, build.outpost_id);
+                }
+
+                dgvRConsume.Columns.Add(cbcBuldingsId);
+                dgvRConsume.Columns.Add(cbcResorcesId);
+                dgvRConsume.Columns.Add(MyHelper.strConsumeSpeed, "Скорость потребления");
+                dgvRConsume.Columns.Add(MyHelper.strSource, "");
+
+                foreach (var brc in ctx.buildings_resources_consume)
+                {
+                    dgvRConsume.Rows.Add(brc.building_id, brc.resources_id, brc.consume_speed, brc);
+                }
+
+                dgvRConsume.Columns[MyHelper.strSource].Visible = false;
+            }
+        }
+
+        private void InitializeDGVResources2()
+        {
+            using (var ctx = new OpenDataContext())
+            {
+                cbcResorcesId.InitializeDataTableResources();
+                dgvResources.Columns.Clear();
+                dgvResources.Rows.Clear();
+
+                dgvResources.Columns.Add(MyHelper.strResourceName, "Название ресурса");
+                dgvResources.Columns.Add(MyHelper.strResourceId, "id");
+                dgvResources.Columns.Add(MyHelper.strSource, "");
+
+                foreach (var res in ctx.resources)
+                {
+                    dgvResources.Rows.Add(res.resources_name, res.resources_id, res);
+                    cbcResorcesId.Add(res.resources_id, res.resources_name);
+                }
+
+                dgvResources.Columns[MyHelper.strResourceId].Visible = false;
+                dgvResources.Columns[MyHelper.strSource].Visible = false;
+            }
         }
 
         private void InitializeDGVRConsume()
@@ -64,10 +104,10 @@ namespace ORM_Resourses
                 }
 
                 BindingSource bs = new BindingSource(dt, "");
-                cbBuldingsId.DataSource = bs;
+                cbcBuldingsId.DataSource = bs;
 
-                dgvRConsume.Columns.Add(cbResorcesId);
-                dgvRConsume.Columns.Add(cbBuldingsId);
+                dgvRConsume.Columns.Add(cbcResorcesId);
+                dgvRConsume.Columns.Add(cbcBuldingsId);
                 dgvRConsume.Columns.Add("consumeSpeed", "Скорость потребления");
                 dgvRConsume.Columns.Add("Source", "Source");
 
@@ -99,7 +139,7 @@ namespace ORM_Resourses
                 }
 
                 BindingSource bs = new BindingSource(dt, "");
-                cbResorcesId.DataSource = bs;
+                cbcResorcesId.DataSource = bs;
 
                 dgvResources.DataSource = dt;
 
@@ -330,60 +370,118 @@ namespace ORM_Resourses
 
         private void dgvResources_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            var id = (int)e.Row.Cells["id"].Value;
-            if (!dgvRConsumeContainRes(id))
+            if (e.Row.Cells[MyHelper.strResourceId].Value != null)
             {
-                e.Cancel = !DeleteFromDB(dgvResources, e.Row);
-            }
-            else
-            {
-                if (MessageBox.Show("Данный ресурс связан с существующей таблицей! Удалить все связанные объекты?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                try
                 {
-                    List<DataGridViewRow> rowsForDel = new List<DataGridViewRow>();
-                    foreach (DataGridViewRow row in dgvRConsume.Rows)
+                    var res = (resource)e.Row.Cells[MyHelper.strSource].Value;
+                    bool cancel = false;
+                    DeletinResource(res, ref cancel);
+
+                    if (cancel)
                     {
-                        if (row.Cells["rId"].Value != null && (int)row.Cells["rId"].Value == id)
-                        {
-                            //if (RowHaveSource(row))
-                            //    dgvRConsume_UserDeletingRow(null, new DataGridViewRowCancelEventArgs(row));
-                            rowsForDel.Add(row);
-                        }
+                        MessageBox.Show("Невозможно удалить ресурс, который используется!");
+                        return;
                     }
-                    foreach (DataGridViewRow row in rowsForDel) dgvRConsume.Rows.Remove(row);
-                    e.Cancel = !DeleteFromDB(dgvResources, e.Row);
+
+                    using (var ctx = new OpenDataContext())
+                    {
+                        ctx.resources.Attach(res);
+                        ctx.resources.Remove(res);
+                        ctx.SaveChanges();
+                        cbcResorcesId.Remove(res.resources_id);
+                    }
                 }
-                else
+                catch (Exception err)
                 {
-                    e.Cancel = true;
+                    MessageBox.Show(err.Message);
                 }
             }
         }
         private void dgvRConsume_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (RowHaveSource(e.Row))
-                e.Cancel = !DeleteFromDB(dgvRConsume, e.Row);
+            if (e.Row.Cells[MyHelper.strSource].Value != null)
+            {
+                try
+                {
+                    var brc = (buildings_resources_consume)e.Row.Cells[MyHelper.strSource].Value;
+
+                    using (var ctx = new OpenDataContext())
+                    {
+                        ctx.buildings_resources_consume.Attach(brc);
+                        ctx.buildings_resources_consume.Remove(brc);
+                        ctx.SaveChanges();
+                    }
+                }
+                catch (Exception err)
+                {
+                    MessageBox.Show(err.Message);
+                }
+            }
         }
 
         private void dgvResources_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            CellEndEdit(dgvResources, e);
-        }
-        private void dgvRConsume_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            CellEndEdit(dgvRConsume, e);
+            if (dgvResources.Rows[e.RowIndex].IsNewRow
+                || !dgvResources.Columns[e.ColumnIndex].Visible) return;
+
+            //var row = dgvResources.Rows[e.RowIndex];
+            var cell = dgvResources[e.ColumnIndex, e.RowIndex];
+            var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
+
+            if (cell.ValueType == typeof(String))
+            {
+                cell.Value = cellFormatedValue;
+            }
         }
 
-        private void dgvRConsume_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+        private void dgvRConsume_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            CellValidating(dgvRConsume, e);
+            if (dgvRConsume.Rows[e.RowIndex].IsNewRow
+                || !dgvRConsume.Columns[e.ColumnIndex].Visible) return;
+
+            //var row = dgvResources.Rows[e.RowIndex];
+            var cell = dgvRConsume[e.ColumnIndex, e.RowIndex];
+            var cellFormatedValue = cell.FormattedValue.ToString().RmvExtrSpaces();
+
+            if (cell.ValueType == typeof(String))
+            {
+                cell.Value = cellFormatedValue;
+            }
         }
-        private void dgvResources_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
+
+        private void dgv_CellValidating(object sender, DataGridViewCellValidatingEventArgs e)
         {
-            CellValidating(dgvResources, e);
+            //var row = dgvOutposts.Rows[e.RowIndex];
+            if (sender == null) return;
+            DataGridView dgv = null;
+            try { dgv = (DataGridView)sender; } catch { return; }
+            if (dgv.Rows[e.RowIndex].IsNewRow || !dgv[e.ColumnIndex, e.RowIndex].IsInEditMode) return;
+
+            var cell = dgv[e.ColumnIndex, e.RowIndex];
+            var cellFormatedValue = e.FormattedValue.ToString().RmvExtrSpaces();
+            int t;
+
+            if (dgv.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
+                && dgv.Columns[e.ColumnIndex].ValueType == typeof(Int32)
+                && !int.TryParse(cellFormatedValue, out t))
+            {
+                if (cellFormatedValue == "" || MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{cellFormatedValue}\"\nОтменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    dgv.CancelEdit();
+                else
+                    e.Cancel = true;
+                return;
+            }
+            else
+            {
+                cell.ErrorText = "";
+            }
         }
 
         private void CancelEdit(object sender, EventArgs e)
         {
+            return;
+
             switch (tabControl.SelectedIndex)
             {
                 case 0:

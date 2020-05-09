@@ -16,6 +16,8 @@ namespace ORM_Resourses
         public static readonly string strBadRow = "Плохая строка!";
         public static readonly string strOutpostIsUsing = "Данный форпост связан с миссией! Измените или удалите миссию!";
 
+        public static readonly string strSource = "Source";
+
         public static readonly string strOutpostId = "outpost_id";
         public static readonly string strOutpostName = "outpost_name";
         public static readonly string strOutpostEconomicValue = "outpost_economic_value";
@@ -34,6 +36,8 @@ namespace ORM_Resourses
 
         public static readonly string strResourceId = "resources_id";
         public static readonly string strResourceName = "resources_name";
+
+        public static readonly string strConsumeSpeed = "consume_speed";
 
         //public static readonly string strUniqueOutpostConstraintName = "unique_outpost";
 
