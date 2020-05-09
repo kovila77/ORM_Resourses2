@@ -11,31 +11,40 @@ namespace ORM_Resourses
     {
         private void InitializeDGVResources()
         {
-            using (var ctx = new OpenDataContext())
+            dgvRConsume.CancelEdit();
+            dgvResources.Rows.Clear();
+            dgvResources.Columns.Clear();
+            dgvResources.DefaultCellStyle.NullValue = null;
+            cbcResorcesId.InitializeDataTableResources();
+
+            dgvResources.Columns.Add(MyHelper.strResourceName, "Название ресурса");
+            dgvResources.Columns.Add(MyHelper.strResourceId, "id");
+            dgvResources.Columns.Add(MyHelper.strSource, "");
+
+            dgvResources.Columns[MyHelper.strResourceName].ValueType = typeof(string);
+            dgvResources.Columns[MyHelper.strResourceId].ValueType = typeof(int);
+            dgvResources.Columns[MyHelper.strSource].ValueType = typeof(resource);
+
+            dgvResources.Columns[MyHelper.strResourceId].Visible = false;
+            dgvResources.Columns[MyHelper.strSource].Visible = false;
+
+            try
             {
-                dgvRConsume.CancelEdit();
-                dgvResources.Rows.Clear();
-                dgvResources.Columns.Clear();
-                dgvResources.DefaultCellStyle.NullValue = null;
-                cbcResorcesId.InitializeDataTableResources();
-
-                dgvResources.Columns.Add(MyHelper.strResourceName, "Название ресурса");
-                dgvResources.Columns.Add(MyHelper.strResourceId, "id");
-                dgvResources.Columns.Add(MyHelper.strSource, "");
-
-                dgvResources.Columns[MyHelper.strResourceName].ValueType = typeof(string);
-                dgvResources.Columns[MyHelper.strResourceId].ValueType = typeof(int);
-                dgvResources.Columns[MyHelper.strSource].ValueType = typeof(resource);
-
-                dgvResources.Columns[MyHelper.strResourceId].Visible = false;
-                dgvResources.Columns[MyHelper.strSource].Visible = false;
-
-
-                foreach (var res in ctx.resources)
+                using (var ctx = new OpenDataContext())
                 {
-                    dgvResources.Rows.Add(res.resources_name, res.resources_id, res);
-                    cbcResorcesId.Add(res.resources_id, res.resources_name);
+                    foreach (var res in ctx.resources)
+                    {
+                        dgvResources.Rows.Add(res.resources_name, res.resources_id, res);
+                        cbcResorcesId.Add(res.resources_id, res.resources_name);
+                    }
                 }
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+#if DEBUG
+                throw err;
+#endif
             }
         }
 
@@ -81,6 +90,7 @@ namespace ORM_Resourses
                         new_res.resources_name = new_resources_name;
 
                         ctx.SaveChanges();
+                        cbcResorcesId.Change(new_res.resources_id, new_res.resources_name);
                     }
                     else
                     {
@@ -100,12 +110,16 @@ namespace ORM_Resourses
                         ctx.SaveChanges();
                         row.Cells[MyHelper.strSource].Value = new_res;
                         row.Cells[MyHelper.strResourceId].Value = new_res.resources_id;
+                        cbcResorcesId.Add(new_res.resources_id, new_res.resources_name);
                     }
                 }
             }
-            catch (Exception err2)
+            catch (Exception err)
             {
-                MessageBox.Show(err2.Message);
+                MessageBox.Show(err.Message);
+#if DEBUG
+                throw err;
+#endif
             }
         }
 
@@ -137,6 +151,9 @@ namespace ORM_Resourses
                 catch (Exception err)
                 {
                     MessageBox.Show(err.Message);
+#if DEBUG
+                    throw err;
+#endif
                 }
             }
         }

@@ -12,6 +12,7 @@ namespace ORM_Resourses
     {
         public static readonly string strEmptyCell = "Вы ввели пустое значение!";
         public static readonly string strUncorrectIntValueCell = "Вы ввели некорректное число!";
+        public static readonly string strUncorrectIntValueZeroCell = "Данная ячейка не моежт быть меньше нуля!";
         public static readonly string strExistingMision = "Для данного форпоста существует точная копия ведённой миссии!";
         public static readonly string strBadRow = "Плохая строка!";
         public static readonly string strOutpostIsUsing = "Данный форпост связан с миссией! Измените или удалите миссию!";

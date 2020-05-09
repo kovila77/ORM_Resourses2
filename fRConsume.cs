@@ -69,13 +69,21 @@ namespace ORM_Resourses
 
             var cell = dgv[e.ColumnIndex, e.RowIndex];
             var cellFormatedValue = e.FormattedValue.ToString().RmvExtrSpaces();
-            int t;
+            int t = -1;
 
             if (dgv.Columns[e.ColumnIndex].CellType != typeof(DataGridViewComboBoxCell)
                 && dgv.Columns[e.ColumnIndex].ValueType == typeof(Int32)
                 && !int.TryParse(cellFormatedValue, out t))
             {
                 if (cellFormatedValue == "" || MessageBox.Show(MyHelper.strUncorrectIntValueCell + $"\n\"{cellFormatedValue}\"\nОтменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    dgv.CancelEdit();
+                else
+                    e.Cancel = true;
+                return;
+            }
+            else if (cell.OwningColumn.Name == MyHelper.strConsumeSpeed && t < 0)
+            {
+                if (MessageBox.Show(MyHelper.strUncorrectIntValueZeroCell + $"\n\"{cellFormatedValue}\"\nОтменить изменения?", "", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     dgv.CancelEdit();
                 else
                     e.Cancel = true;

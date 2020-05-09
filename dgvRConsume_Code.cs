@@ -22,19 +22,33 @@ namespace ORM_Resourses
             dgvRConsume.Columns.Add(MyHelper.strConsumeSpeed, "Скорость потребления");
             dgvRConsume.Columns.Add(MyHelper.strSource, "");
 
-            using (var ctx = new OpenDataContext())
-            {
-                foreach (var build in ctx.buildings)
-                {
-                    cbcBuldingsId.Add(build.building_id, build.building_name, build.outpost_id);
-                }
+            dgvRConsume.Columns[MyHelper.strBuildingId].ValueType = typeof(int);
+            dgvRConsume.Columns[MyHelper.strResourceId].ValueType = typeof(int);
+            dgvRConsume.Columns[MyHelper.strConsumeSpeed].ValueType = typeof(int);
+            dgvRConsume.Columns[MyHelper.strSource].ValueType = typeof(buildings_resources_consume);
 
-                foreach (var brc in ctx.buildings_resources_consume)
+            try
+            {
+                using (var ctx = new OpenDataContext())
                 {
-                    dgvRConsume.Rows.Add(brc.building_id, brc.resources_id, brc.consume_speed, brc);
+                    foreach (var build in ctx.buildings)
+                    {
+                        cbcBuldingsId.Add(build.building_id, build.building_name, build.outpost_id);
+                    }
+
+                    foreach (var brc in ctx.buildings_resources_consume)
+                    {
+                        dgvRConsume.Rows.Add(brc.building_id, brc.resources_id, brc.consume_speed, brc);
+                    }
                 }
             }
-
+            catch (Exception err)
+            {
+                MessageBox.Show(err.Message);
+#if DEBUG
+                throw err;
+#endif
+            }
             dgvRConsume.Columns[MyHelper.strSource].Visible = false;
         }
 
@@ -119,6 +133,8 @@ namespace ORM_Resourses
                         new_brc.building_id = new_building_id;
                         new_brc.consume_speed = new_consume_speed;
 
+                        ctx.buildings_resources_consume.Add(new_brc);
+
                         ctx.SaveChanges();
 
                         row.Cells[MyHelper.strSource].Value = new_brc;
@@ -128,6 +144,9 @@ namespace ORM_Resourses
             catch (Exception err)
             {
                 MessageBox.Show(err.Message);
+#if DEBUG
+                throw err;
+#endif
             }
         }
 
@@ -148,6 +167,9 @@ namespace ORM_Resourses
                 catch (Exception err)
                 {
                     MessageBox.Show(err.Message);
+#if DEBUG
+                    throw err;
+#endif
                 }
             }
         }
