@@ -96,12 +96,16 @@
   <ItemGroup>
     <Compile Include="building.cs" />
     <Compile Include="buildings_resources_consume.cs" />
+    <Compile Include="DataGridViewComboBoxColumnBuildings.cs" />
+    <Compile Include="DataGridViewComboBoxColumnOutpost.cs" />
+    <Compile Include="DataGridViewComboBoxColumnResources.cs" />
     <Compile Include="fRConsume.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="fRConsume.Designer.cs">
       <DependentUpon>fRConsume.cs</DependentUpon>
     </Compile>
+    <Compile Include="MyHelper.cs" />
     <Compile Include="OpenDataContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
