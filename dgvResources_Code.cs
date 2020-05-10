@@ -11,7 +11,7 @@ namespace ORM_Resourses
     {
         private void InitializeDGVResources()
         {
-            dgvRConsume.CancelEdit();
+            dgvResources.CancelEdit();
             dgvResources.Rows.Clear();
             dgvResources.Columns.Clear();
             dgvResources.DefaultCellStyle.NullValue = null;
@@ -120,7 +120,7 @@ namespace ORM_Resourses
 
         private void dgvResources_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (e.Row.Cells[MyHelper.strSource].Value != null)
+            if (e.Row.HaveSource())
             {
                 try
                 {

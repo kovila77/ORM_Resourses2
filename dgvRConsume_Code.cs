@@ -27,6 +27,8 @@ namespace ORM_Resourses
             dgvRConsume.Columns[MyHelper.strConsumeSpeed].ValueType = typeof(int);
             dgvRConsume.Columns[MyHelper.strSource].ValueType = typeof(buildings_resources_consume);
 
+            dgvRConsume.Columns[MyHelper.strSource].Visible = false;
+
             try
             {
                 using (var ctx = new OpenDataContext())
@@ -46,7 +48,6 @@ namespace ORM_Resourses
             {
                 MessageBox.Show(err.Message);
             }
-            dgvRConsume.Columns[MyHelper.strSource].Visible = false;
         }
 
         private void dgvRConsume_RowValidating(object sender, DataGridViewCellCancelEventArgs e)
@@ -92,10 +93,10 @@ namespace ORM_Resourses
                         int new_resource_id = (int)row.Cells[MyHelper.strResourceId].Value;
                         int new_consume_speed = (int)row.Cells[MyHelper.strConsumeSpeed].Value;
 
-                        if (ctx.buildings_resources_consume.AsEnumerable().FirstOrDefault(res =>
-                                    res != new_brc
-                                    && res.building_id == new_building_id
-                                    && res.resources_id == new_resource_id) != null)
+                        if (ctx.buildings_resources_consume.AsEnumerable().FirstOrDefault(brc =>
+                                    brc != new_brc
+                                    && brc.building_id == new_building_id
+                                    && brc.resources_id == new_resource_id) != null)
                         {
                             string eo = $"Для данного здания потребляемый ресурс уже существует!";
                             MessageBox.Show(eo);
@@ -127,9 +128,9 @@ namespace ORM_Resourses
                         int new_resource_id = (int)row.Cells[MyHelper.strResourceId].Value;
                         int new_consume_speed = (int)row.Cells[MyHelper.strConsumeSpeed].Value;
 
-                        if (ctx.buildings_resources_consume.AsEnumerable().FirstOrDefault(res =>
-                                    res.building_id == new_building_id
-                                    && res.resources_id == new_resource_id) != null)
+                        if (ctx.buildings_resources_consume.AsEnumerable().FirstOrDefault(brc =>
+                                    brc.building_id == new_building_id
+                                    && brc.resources_id == new_resource_id) != null)
                         {
                             string eo = $"Для данного здания потребляемый ресурс уже существует!";
                             MessageBox.Show(eo);
@@ -158,7 +159,7 @@ namespace ORM_Resourses
 
         private void dgvRConsume_UserDeletingRow(object sender, DataGridViewRowCancelEventArgs e)
         {
-            if (e.Row.Cells[MyHelper.strSource].Value != null)
+            if (e.Row.HaveSource())
             {
                 try
                 {
